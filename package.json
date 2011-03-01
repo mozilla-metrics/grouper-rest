@@ -2,8 +2,8 @@
 , "description": "REST Frontend to the Grundle clustering service.": ""
 , "version": "0.0.1"
 , "repository" : "git://github.com/michaelku/grundle-rest.git"
-, "dependencies": { "connect": ">= 0.5.10"
-                  , "dispatch": ">= 0.0.1"
+, "dependencies": { "connect": ">= 1.0.0"
+                  , "express": ">= 2.0.0-pre"
                   , "quip": ">= 0.0.1"
                   , "coffee-script": ">= 1.0.1" }
 , "engines": { "node": ">= 0.4" }
