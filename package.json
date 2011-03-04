@@ -1,7 +1,7 @@
-{ "name": "grundle-rest"
-, "description": "REST Frontend to the Grundle clustering service.": ""
+{ "name": "grouper-rest"
+, "description": "REST Frontend to the Grouperfish clustering service.": ""
 , "version": "0.0.1"
-, "repository" : "git://github.com/michaelku/grundle-rest.git"
+, "repository" : "git://github.com/michaelku/grouper-rest.git"
 , "dependencies": { "connect": ">= 1.0.0"
                   , "express": ">= 2.0.0-pre"
                   , "quip": ">= 0.0.1"
@@ -9,7 +9,7 @@
 , "engines": { "node": ">= 0.4" }
 , "licenses" :
   [ { "type" : "MPL"
-    , "url" : "http://github.com/michaelku/grundle-rest/LICENSE"
+    , "url" : "http://github.com/michaelku/grouper-rest/LICENSE"
     }
   ]
 }

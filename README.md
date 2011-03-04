@@ -1,7 +1,7 @@
-Grundle REST
-============
+Grouperfish REST
+================
 
-REST service frontend to [grundle](http://github.com/michaelku/grundle) in node.js.
+REST service frontend to [grouperfish](http://github.com/michaelku/grouperfish) in node.js.
 
 
 How can I use it?
