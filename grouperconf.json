@@ -3,4 +3,5 @@
 , "redis": ""
 , "rabbitmq": ""
 , "prefix": ""
+, "restPort": "8030"
 }
