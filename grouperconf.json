@@ -1,0 +1,6 @@
+{ "hbaseRest": "http://localhost:8080"
+, "hbaseZk": "localhost:2181"
+, "redis": ""
+, "rabbitmq": ""
+, "prefix": ""
+}
