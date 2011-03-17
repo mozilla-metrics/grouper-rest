@@ -1,0 +1,7 @@
+{ "hbaseRest": "http://firefly:8890"
+, "hbaseZk": "localhost:2181"
+, "redis": ""
+, "rabbitmq": ""
+, "prefix": "testfish_"
+, "restPort": "8031"
+}

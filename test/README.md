@@ -5,6 +5,7 @@ Get the coffee-script compatible version of
 
     # run the tests (maybe add -s for serial execution)
     expresso -l coffeescript test/
+
     # compile to JS to inspect if necessary
     coffee -o test_js -c test
 
