@@ -17,9 +17,9 @@ testStore = (beforeExit, modules...) ->
       stack.push module
     stack.on 'storeAdded', (store) -> ++added
     stack.on 'storeFailed', (store) -> ++failed
-    stack.on 'available', (store) -> available = true
-    stack.on 'error', (err) -> assert.ok false
-    stack.build()
+    stack.build (err, store) ->
+      if err then assert.ok false
+      available = true
   beforeExit ->
     assert.eql added, modules.length + 1
     assert.eql failed, 0
@@ -31,11 +31,9 @@ module.exports =
     confEmitter.on 'error', () -> (assert.ok false)
     confEmitter.on 'configured', (conf) ->
       stack = stackFactory conf
-      stack.on 'error', (err) ->
-        console.log "error creating noop stack", err
-        assert.ok false
-      stack.on 'available', (store) -> called = true
-      stack.build()
+      stack.build (err, store) ->
+        if err then assert.ok false
+        called = true
     beforeExit -> assert.ok called
 
   "init stack with defaults": (beforeExit) ->
@@ -54,9 +52,11 @@ module.exports =
     confEmitter.on 'configured', (conf) ->
       stack = stackFactory conf
       stack.on 'storeFailed', (err) -> pushFailed = true
-      stack.on 'available', (store) -> available = true
-      stack.build()
+      stack.build (err, store) ->
+        if err then return
+        available = true
       stack.push (require "store/defaults")
+
     beforeExit ->
       assert.ok available
       assert.ok pushFailed

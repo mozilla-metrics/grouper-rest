@@ -1,7 +1,7 @@
-{ "hbaseRest": "http://localhost:8080"
+{ "hbaseRest": "http://localhost:8890"
 , "hbaseZk": "localhost:2181"
 , "redis": ""
 , "rabbitmq": ""
-, "prefix": ""
+, "prefix": "gfish_"
 , "restPort": "8030"
 }

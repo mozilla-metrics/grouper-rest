@@ -1,6 +1,6 @@
 # disable 'testfish_clusters'; drop 'testfish_clusters';
 # disable 'testfish_collections'; drop 'testfish_collections';
-# disable 'testfish_documents'; drop 'testfish_documents'
+# disable 'testfish_documents'; drop 'testfish_documents';
 
 module.exports =
   documents:
@@ -65,22 +65,22 @@ module.exports =
       meta: {namespace: "keats", collection: "all", size: 1}
       mahout: {dictionary: "<opaque>"}
       configurations:
-        "DEFAULT": '{lastRebuild: 1299353145}'
+        "DEFAULT": '{"lastRebuild": 1299353145}'
     "will/ere":
       meta: {namespace: "will", collection: "ere", size: 1}
       mahout: {dictionary: "<opaque>"}
       configurations:
-        "DEFAULT": '{lastRebuild: 1299173619}'
+        "DEFAULT": '{"lastRebuild": 1299173619}'
     "will/mid":
       meta: {namespace: "will", collection: "mid", size: 7}
       mahout: {dictionary: "<opaque>"}
       configurations:
-        "DEFAULT": '{lastRebuild: 1299352272}'
+        "DEFAULT": '{"lastRebuild": 1299352272}'
     "will/tail":
       meta: {namespace: "will", collection: "tail", size: 2}
       mahout: {dictionary: "<opaque>"}
       configurations:
-        "DEFAULT": '{lastRebuild: 1242375913}'
+        "DEFAULT": '{"lastRebuild": 1242375913}'
 
   clusters:
     "DEFAULT/keats/all/1299353145/fail":
@@ -89,13 +89,13 @@ module.exports =
     "DEFAULT/will/ere/1299352272/salutation":
       meta: {namespace: "will", collection: "ere", label: "salutation"}
       documents: {"x3": '0'}
-    "DEFAULT/will/ere/1299352272/general":
+    "DEFAULT/will/mid/1299352272/general":
       meta: {namespace: "will", collection: "mid", label: "general"}
       documents: {"doc1": '0.1', "doc2": '0.2'}
-    "DEFAULT/will/ere/1299352272/macbeth":
+    "DEFAULT/will/mid/1299352272/macbeth":
       meta: {namespace: "will", collection: "mid", label: "macbeth"}
       documents: {"doc3": '0.2', "doc4": '0.25', "doc5": '0.1'}
-    "DEFAULT/will/ere/1299352272/caesar":
+    "DEFAULT/will/mid/1299352272/caesar":
       meta: {namespace: "will", collection: "mid", label: "caesar"}
       documents: {"doc6": '0.7', "doc7": '0.3'}
     "DEFAULT/will/tail/1299352272/1242375913":

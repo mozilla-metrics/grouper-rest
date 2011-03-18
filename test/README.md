@@ -2,14 +2,14 @@
 
 Get [coffee-script][0] and [expresso][1] to run these tests:
 
-* compile to JS (to inspect errors if necessary)
+* compile to JS
 	coffee -o test_js -c test
 
 * run the unit tests
-  expresso -I lib test_js/unit/*.js
+  expresso -I lib -I test_js test_js/unit/*.js
 
 * run the integration tests
-	expresso -I lib test_js/integration/*.js
+	expresso -I lib -I test_js test_js/integration/*.js
 	
 Do not try to use the --serial option, as that does not work with beforeExit-checks (these check if callbacks have been executed).
 

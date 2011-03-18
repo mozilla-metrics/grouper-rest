@@ -10,11 +10,11 @@ Nodes on setup
 - When setting up against CDH3b4, make sure hbase rest works
   https://issues.cloudera.org/browse/DISTRO-106
   add these missing jars, e.g. from local maven like this
-  > cp -v \
-    .m2/repository/asm/asm/3.3/asm-3.3.jar \
-    .m2/repository/org/codehaus/jackson/jackson-jaxrs/1.5.5/*.jar \
-    .m2/repository/org/codehaus/jackson/jackson-core-asl/1.6.1/*.jar \
-    .m2/repository/com/sun/xml/bind/jaxb-impl/2.1.12/*.jar \
+  > cp -v
+    .m2/repository/asm/asm/3.3/asm-3.3.jar
+    .m2/repository/org/codehaus/jackson/jackson-jaxrs/1.5.5/*.jar
+    .m2/repository/org/codehaus/jackson/jackson-core-asl/1.6.1/*.jar
+    .m2/repository/com/sun/xml/bind/jaxb-impl/2.1.12/*.jar
   $HBASE_HOME/lib
   
 
