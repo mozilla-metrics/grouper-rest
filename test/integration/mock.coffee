@@ -1,5 +1,5 @@
 assert = require 'assert'
-server = (require '../lib/mock').server
+server = (require 'mock').server
 
 doc = JSON.stringify {id: "4711", text: "My NSHO"}
 
@@ -7,9 +7,7 @@ module.exports =
   'test GET doc': ->
     req = {method: 'GET', url: '/docs/test-ns/test-coll/1497203'}
     expected = {id: "1497203", text: "paste and search !!! awesome"}
-    check = (res) ->
-      console.log res.body
-      assert.eql (JSON.parse res.body), expected
+    check = (res) -> assert.eql (JSON.parse res.body), expected
     assert.response server, req, check
     req = {method: 'GET', url: '/docs/test-ns/no-such-doc'}
     assert.response server, req, {status: 404}

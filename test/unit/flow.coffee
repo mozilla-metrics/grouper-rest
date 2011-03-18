@@ -1,7 +1,7 @@
 assert = require 'assert'
 
 need = (require 'flow').need
-config = (require 'config') 'test/testconf.json'
+config = (require 'config') './test/resources/testconf.json'
 
 
 x = "?"
@@ -21,6 +21,7 @@ methods =
   'test3': delayed 4
 
 later = need lock, "unlock", null, (delayed 1)
+
 module.exports =
   start: -> assert.eql x, "?"
   asyncOne: ->
