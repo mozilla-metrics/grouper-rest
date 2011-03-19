@@ -40,7 +40,7 @@ module.exports =
       method: 'POST'
       url: '/collections/test-ns/my-collection'
       data: doc
-    assert.response server, req, {body: "/docs/test-ns/4711"}
+    assert.response server, req, {body: "/docs/test-ns/my-collection/4711"}
 
   'test POST doc forbidden': ->
     req =
