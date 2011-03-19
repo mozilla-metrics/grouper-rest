@@ -18,7 +18,8 @@ testStore = (beforeExit, modules...) ->
     stack.on 'storeAdded', (store) -> ++added
     stack.on 'storeFailed', (store) -> ++failed
     stack.build (err, store) ->
-      if err then assert.ok false
+      if err then console.log "Store err: ", err, ", store: ", store
+      assert.ok !err
       available = true
   beforeExit ->
     assert.eql added, modules.length + 1
@@ -28,7 +29,9 @@ testStore = (beforeExit, modules...) ->
 module.exports =
   "init noop stack": (beforeExit) ->
     called = false
-    confEmitter.on 'error', () -> (assert.ok false)
+    confEmitter.on 'error', (err...) ->
+      console.log err...
+      assert.ok false
     confEmitter.on 'configured', (conf) ->
       stack = stackFactory conf
       stack.build (err, store) ->
@@ -41,9 +44,6 @@ module.exports =
 
   "init stack with hbase": (beforeExit) ->
     testStore beforeExit, (require "store/hbase")
-
-  "init stack with hbase+defaults": (beforeExit) ->
-    testStore beforeExit, (require "store/defaults"), (require "store/hbase")
 
   "try modifying sealed stack": (beforeExit) ->
     available = false

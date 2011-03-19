@@ -1,20 +1,22 @@
 { "name": "grouper-rest"
 , "main": "./bin/run-grouper-rest.js"
-, "description": "REST Frontend to the Grouperfish clustering service.": ""
+, "description": "REST Frontend to the Grouperfish clustering service."
 , "version": "0.0.1"
 , "repository" : "git://github.com/michaelku/grouper-rest.git"
 , "dependencies": { "connect": ">= 1.0.0"
                   , "express": ">= 2.0.0-pre"
                   , "quip": ">= 0.0.1"
-                  , "coffee-script": ">= 1.0.1"
                   , "slide": ">= 1.1.1"
-                  , "hbase": ">= 0.0.8"
+                  , "hbase": ">= 0.0.9"
                   , "amqp": ">= 0.0.2"
-                  , "redis": ">= 0.5.7" }
+                  , "redis": ">= 0.5.7"
+                  }
+, "devDependencies": { "coffee-script": ">= 1.0.1"
+                     , "expresso": ">= 0.7.3"
+                     }
 , "engines": { "node": ">= 0.4" }
-, "licenses" :
-  [ { "type" : "MPL"
-    , "url" : "http://github.com/michaelku/grouper-rest/LICENSE"
-    }
-  ]
+, "licenses" : [ { "type" : "MPL"
+                 , "url" : "http://github.com/michaelku/grouper-rest/LICENSE"
+                 }
+               ]
 }

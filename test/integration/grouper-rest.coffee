@@ -3,7 +3,7 @@ asyncMap = (require 'slide').asyncMap
 chain = (require 'slide').chain
 url = (require 'url')
 
-fixtures = (require 'resources/fixtures')
+fixtures = (require '../resources/fixtures')
 stackFactory = (require 'store/stack')
 serverFactory = (require 'grouper-rest')
 config = (require 'config') 'test/resources/testconf.json'
@@ -13,7 +13,9 @@ server = null
 config.on 'error', (msg...) -> console.log(msg...)
 config.on 'configured', (conf) ->
   stack = stackFactory conf
-  stack.on 'error', (err) -> throw err
+  stack.on 'error', (up...) ->
+    console.log up...
+    throw up
   stack.push (require 'store/hbase')
   stack.build (store) ->
 
