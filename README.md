@@ -10,11 +10,6 @@ This will eventually be available from [npm](https://github.com/isaacs/npm). In 
     > # install dependencies
     > sudo npm install ./grouper-rest
 
-This package relies on unreleased versions of [quip][quip]:
-
-    > git clone https://github.com/caolan/quip
-    > sudo npm install ./quip
-
 When setting up against [hbase 0.90.1][CDH3 b4], make sure hbase rest works, because there is a [bug][DISTRO-106] with missing jars.
 You need to provide them, e.g. from local maven like this
 

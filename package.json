@@ -5,7 +5,7 @@
 , "repository" : "git://github.com/michaelku/grouper-rest.git"
 , "dependencies": { "connect": ">= 1.0.0"
                   , "express": ">= 2.0.0-pre"
-                  , "quip": ">= 0.0.1"
+                  , "quip": ">= 0.0.2"
                   , "slide": ">= 1.1.1"
                   , "hbase": ">= 0.0.9"
                   , "amqp": ">= 0.0.2"
@@ -14,7 +14,7 @@
 , "devDependencies": { "coffee-script": ">= 1.0.1"
                      , "expresso": ">= 0.7.3"
                      }
-, "engines": { "node": ">= 0.4" }
+, "engines": { "node": ">= 0.4.3" }
 , "licenses" : [ { "type" : "MPL"
                  , "url" : "http://github.com/michaelku/grouper-rest/LICENSE"
                  }
