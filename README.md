@@ -25,7 +25,7 @@ You need to provide them, e.g. from local maven like this
 [quip]:https://github.com/caolan/quip
 
 
-### Testing
+### Running Tests
 
 Get [coffee-script][0] and [expresso][1] to run the tests (included in the
 `devDependencies`)
@@ -40,6 +40,11 @@ Do *not* try to use the `--serial` option! That does not work with `beforeExit`,
 
 [0]: http://jashkenas.github.com/coffee-script/
 [1]: https://github.com/visionmedia/expresso
+
+
+### Running the Service
+
+    ./bin/grouperfish run CONFIG
 
 
 ### Organization

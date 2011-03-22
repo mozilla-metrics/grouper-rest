@@ -1,14 +1,15 @@
 assert = require 'assert'
 
 need = (require 'flow').need
-config = (require 'config') './test/resources/testconf.json'
+config = (require 'config')
 
 
 x = "?"
 runs = 0
 lock = new (require 'events').EventEmitter()
 
-config.on 'configured', (conf) ->
+config  './test/resources/testconf.json', (err, conf) ->
+  assert.ok !err
   x = "!"
   lock.emit "unlock"
 

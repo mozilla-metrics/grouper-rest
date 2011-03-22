@@ -5,19 +5,18 @@ config = (require 'config')
 
 module.exports =
   "load test config": ->
-    e = config './test/resources/testconf.json'
-    e.on 'error', () -> (assert.ok false)
+    config './test/resources/testconf.json', (err) -> assert.ok !err
 
   "check event": (beforeExit) ->
-    e = config './test/resources/testconf.json'
     loaded = false
-    e.on 'configured', (conf) -> loaded = true
+    config './test/resources/testconf.json', (err, conf) ->
+      assert.ok !err
+      loaded = true
     beforeExit -> assert.eql loaded, true
 
   "config values": (beforeExit) ->
-    e = config './test/resources/testconf.json'
     called = false
-    e.on 'configured', (conf) ->
+    config './test/resources/testconf.json', (err, conf) ->
       called = true
       assert.eql conf.hbaseRest, "http://firefly:8890"
       assert.eql conf.hbaseZk, "localhost:2181"
@@ -26,16 +25,16 @@ module.exports =
     beforeExit -> assert.ok called
 
   "config extenstions": (beforeExit) ->
-    e = config './test/resources/testconf.json'
     called = false
-    e.on 'configured', (conf) ->
+    config './test/resources/testconf.json', (err, conf) ->
+      assert.ok !err
       called = true
       assert.ok conf.tableName
       assert.ok conf.hbaseClient
     beforeExit -> assert.ok called
 
   "check missing config event": (beforeExit) ->
-    e = config './test/resources/testconf.jzon'
     failed = false
-    e.on 'error', () -> failed = true
+    config './test/resources/testconf.jzon', (err) ->
+      if err then failed = true
     beforeExit -> assert.ok failed

@@ -3,27 +3,21 @@ asyncMap = (require 'slide').asyncMap
 chain = (require 'slide').chain
 url = (require 'url')
 
+server = null
 fixtures = (require '../resources/fixtures')
 stackFactory = (require 'store/stack')
 serverFactory = (require 'grouper-rest')
-config = (require 'config') 'test/resources/testconf.json'
-
-server = null
-
-config.on 'error', (msg...) -> console.log(msg...)
-config.on 'configured', (conf) ->
+config = (require 'config') 'test/resources/testconf.json', (err, conf) ->
   stack = stackFactory conf
   stack.on 'error', (up...) ->
     console.log up...
     throw up
   stack.push (require 'store/hbase')
   stack.build (store) ->
-
     parts = url.parse conf.hbaseRest
     client = require('hbase') {port: parts.port, host:parts.hostname}
     list = for tableId, contents of fixtures
       [load, client, (conf.tableName tableId), contents]
-
     chain list, (err, success) ->
       serverFactory.start conf, (up, s) ->
         if up then throw up

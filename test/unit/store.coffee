@@ -1,17 +1,18 @@
 assert = require 'assert'
 
-query = require 'store/query'
+query = require 'query/query'
 stackFactory = require 'store/stack'
+config = (require 'config')
 
-
-confEmitter = (require 'config') "test/resources/testconf.json"
+TEST_CONF = "test/resources/testconf.json"
 
 testStore = (beforeExit, modules...) ->
   available = false
   added = 0
   failed = 0
-  confEmitter.on 'error', -> assert.ok false
-  confEmitter.on 'configured', (conf) ->
+  config TEST_CONF, (err, conf) ->
+    assert.ok !err
+    assert.ok conf != null
     stack = stackFactory conf
     for module in modules
       stack.push module
@@ -29,10 +30,9 @@ testStore = (beforeExit, modules...) ->
 module.exports =
   "init noop stack": (beforeExit) ->
     called = false
-    confEmitter.on 'error', (err...) ->
-      console.log err...
-      assert.ok false
-    confEmitter.on 'configured', (conf) ->
+
+    config TEST_CONF, (err, conf) ->
+      assert.ok !err
       stack = stackFactory conf
       stack.build (err, store) ->
         if err then assert.ok false
@@ -48,8 +48,9 @@ module.exports =
   "try modifying sealed stack": (beforeExit) ->
     available = false
     pushFailed = false
-    confEmitter.on 'error', -> assert.ok false
-    confEmitter.on 'configured', (conf) ->
+    config TEST_CONF, (err, conf) ->
+      assert.ok !err
+      assert.ok conf != null
       stack = stackFactory conf
       stack.on 'storeFailed', (err) -> pushFailed = true
       stack.build (err, store) ->
