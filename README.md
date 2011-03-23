@@ -2,6 +2,7 @@
 
 REST service frontend to [grouperfish](http://github.com/michaelku/grouperfish) in node.js.
 
+
 ### Notes on setup
 This will eventually be available from [npm](https://github.com/isaacs/npm). In the meantime:
 
@@ -19,6 +20,12 @@ You need to provide them, e.g. from local maven like this
     .m2/repository/org/codehaus/jackson/jackson-core-asl/1.6.1/*.jar \
     .m2/repository/com/sun/xml/bind/jaxb-impl/2.1.12/*.jar \
     $HBASE_HOME/lib
+
+If you do not set $GROUPERFISH_HOME, the service process will look for 
+configuration defaults in `$(pwd)../../conf/`:
+
+* `grouperfish.json`: Your configuration (if not using `--config FILE`)
+* `defaults.json`: Factory settings. Used as a fallback for settings not specified in `grouperfish.json`.
 
 [CDH3 b4]: http://archive.cloudera.com/cdh/3/hbase-0.90.1-CDH3B4/
 [DISTRO-106]: https://issues.cloudera.org/browse/DISTRO-106

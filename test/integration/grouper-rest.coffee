@@ -2,11 +2,14 @@ assert = require 'assert'
 asyncMap = (require 'slide').asyncMap
 chain = (require 'slide').chain
 url = (require 'url')
-
-server = null
 fixtures = (require '../resources/fixtures')
 stackFactory = (require 'store/stack')
 serverFactory = (require 'grouper-rest')
+
+
+server = null
+
+
 config = (require 'config') 'test/resources/testconf.json', (err, conf) ->
   stack = stackFactory conf
   stack.on 'error', (up...) ->
@@ -24,7 +27,6 @@ config = (require 'config') 'test/resources/testconf.json', (err, conf) ->
         server = s
         for k, t of tests
           exports[k] = t
-
 
 load = (client, tableName, contents, cb) ->
   "Load the passed fixtures into the given table."
@@ -45,6 +47,14 @@ load = (client, tableName, contents, cb) ->
 
 
 tests =
+  'test GET doc': (beforeExit) ->
+    req = {method: 'GET', url: '/docs/will/mid/doc3'}
+    check = (res) ->
+      doc = (JSON.parse res.body)
+      assert.eql doc.id, "doc3"
+      assert.eql doc.text, fixtures.documents["will/mid/doc3"].content.text
+    assert.response server, req, {status: 200}, check
+
   'test GET all clusters A': ->
     req = {method: 'GET', url: '/clusters/will/mid'}
     check = (res) ->
@@ -57,14 +67,6 @@ tests =
       assert.eql all["caesar"].length, 2
       assert.eql all["general"].length, 2
     assert.response server, req, check
-
-  'test GET doc': (beforeExit) ->
-    req = {method: 'GET', url: '/docs/will/mid/doc3'}
-    check = (res) ->
-      doc = (JSON.parse res.body)
-      assert.eql doc.id, "doc3"
-      assert.eql doc.text, fixtures.documents["will/mid/doc3"].content.text
-    assert.response server, req, {status: 200}, check
 
   'test GET one cluster': (beforeExit) ->
     req = {method: 'GET', url: '/clusters/will/mid/macbeth'}

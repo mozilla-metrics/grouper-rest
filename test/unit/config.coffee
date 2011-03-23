@@ -7,24 +7,32 @@ module.exports =
   "load test config": ->
     config './test/resources/testconf.json', (err) -> assert.ok !err
 
-  "check event": (beforeExit) ->
+  "it calls back": (beforeExit) ->
     loaded = false
     config './test/resources/testconf.json', (err, conf) ->
       assert.ok !err
       loaded = true
     beforeExit -> assert.eql loaded, true
 
-  "config values": (beforeExit) ->
+  "it has defaults": (beforeExit) ->
+    called = false
+    config null, (err, conf) ->
+      called = true
+      assert.eql conf.prefix, "grouperfish_"
+      assert.eql conf.hbaseRest, "http://localhost:8080"
+    beforeExit -> assert.ok called
+
+  "it allows to configure stuff": (beforeExit) ->
     called = false
     config './test/resources/testconf.json', (err, conf) ->
       called = true
-      assert.eql conf.hbaseRest, "http://firefly:8890"
+      assert.eql conf.hbaseRest, "http://localhost:8080"
       assert.eql conf.hbaseZk, "localhost:2181"
       assert.eql conf.prefix, "testfish_"
       assert.eql conf.restPort, "8031"
     beforeExit -> assert.ok called
 
-  "config extenstions": (beforeExit) ->
+  "it has factory extensions": (beforeExit) ->
     called = false
     config './test/resources/testconf.json', (err, conf) ->
       assert.ok !err
@@ -33,8 +41,10 @@ module.exports =
       assert.ok conf.hbaseClient
     beforeExit -> assert.ok called
 
-  "check missing config event": (beforeExit) ->
-    failed = false
-    config './test/resources/testconf.jzon', (err) ->
-      if err then failed = true
-    beforeExit -> assert.ok failed
+  "it has defaults for fallback": (beforeExit) ->
+    called = false
+    config './test/resources/testconf.jzon', (err, conf) ->
+      called = true
+      assert.ok !err
+      assert.eql conf.restPort, "8030"
+    beforeExit -> assert.ok called

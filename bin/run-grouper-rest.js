@@ -3,7 +3,7 @@ var serverFactory = require('grouper-rest')
 
 
 function usage (status) {
-  console.log("usage: node", process.argv[1], "COMMAND", "CONFIG_FILE_PATH")
+  console.log("usage: node", process.argv[1], "COMMAND", "[CONFIG_FILE_PATH]")
   return process.exit(status)
 }
 
@@ -30,11 +30,9 @@ function main (args) {
       return usage(0)
 
     case "run":
-      if (!parameters.length) return usage(1)
       return run.apply(null, parameters)
 
     case "reset":
-      if (!parameters.length) return usage(1)
       return reset.apply(null, parameters)
 
     default:
