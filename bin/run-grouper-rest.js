@@ -44,7 +44,7 @@ function main (args) {
 function reset (configPath) {
   var conf = configFactory(configPath, function (err, conf) {
     if (err) throw err
-    console.log("Dropping '%s'! Enter 'Yes' to proceed.", conf.prefix)
+    console.log("About to obliterate %s* -- 'Yes' to proceed.", conf.prefix)
     readString(function (err, str) {
       if (str != "Yes\n" ) {
         console.log("aborted")
