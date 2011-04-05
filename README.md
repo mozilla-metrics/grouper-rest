@@ -76,11 +76,9 @@ There is a mock service. Use it to develop and test clients without running hbas
 
 ### Coding Style
 
-There is a [Mozilla Style Guide](https://developer.mozilla.org/en/Mozilla_Coding_Style_Guide) on MDN. Should be followed in general.
+Node contributor [Felix Geisendörfer](http://twitter.com/felixge) has put together a comprehensive [JavaScript code style](http://nodeguide.com/style.html). It reflects common best practices fairly well and is very much compatible with the [Mozilla Style Guide](https://developer.mozilla.org/en/Mozilla_Coding_Style_Guide), but more detailed. It is the code style used for JavaScript in this project.
 
-Moreover, the [npm](https://github.com/isaacs/npm) package has pretty insightful [guidelines](https://github.com/isaacs/npm/blob/master/doc/coding-style.md).  These are more detailed, but also unconventional. They do not clash with what is on MDN too much, plus they exist. So they are used here.
-
-Long term we probably want to use [CoffeeScript](http://jashkenas.github.com/coffee-script/) instead, which simplifies callbacks a lot. For only the tests do so.
+The documentation comments are in [Closure Compiler JSDoc Syntax](http://code.google.com/closure/compiler/docs/js-for-compiler.html#types). This is a bit different from other JSDoc comment styles, but can be checked for type safety using the closure compiler tools. 
 
 
 ### Copyright and License

@@ -5,11 +5,12 @@
 , "repository" : "git://github.com/michaelku/grouper-rest.git"
 , "dependencies": { "connect": ">= 1.0.0"
                   , "express": ">= 2.0.0-pre"
-                  , "quip": ">= 0.0.2"
+                  , "quip": ">= 0.0.2" // mock-only
                   , "slide": ">= 1.1.1"
                   , "hbase": ">= 0.0.9"
                   , "amqp": ">= 0.0.2"
                   , "redis": ">= 0.5.7"
+                  , "json-builder": ">= 0.0.1"
                   }
 , "devDependencies": { "coffee-script": ">= 1.0.1"
                      , "expresso": ">= 0.7.3"
