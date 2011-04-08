@@ -1,49 +1,59 @@
 assert = require 'assert'
-asyncMap = (require 'slide').asyncMap
+url = require 'url'
+
 chain = (require 'slide').chain
-url = (require 'url')
-fixtures = (require '../resources/fixtures')
-stackFactory = (require 'store/stack')
-serverFactory = (require 'grouper-rest')
+asyncMap = (require 'slide').asyncMap
+
+rest = require 'grouper-rest'
+storage = require 'storage'
+StackFactory = storage.StackFactory
+fixtures = require '../resources/fixtures'
 
 
 server = null
 
 
-config = (require 'config') 'test/resources/testconf.json', (err, conf) ->
-  stack = stackFactory conf
-  stack.on 'error', (up...) ->
-    console.log up...
-    throw up
-  stack.push (require 'store/hbase')
-  stack.build (store) ->
+setup = (require 'config') 'test/resources/testconf.json', (err, conf) ->
+  factory = new StackFactory conf
+  factory.push (require 'storage').hbase.factory
+  factory.build (store) ->
     parts = url.parse conf.hbaseRest
     client = require('hbase') {port: parts.port, host:parts.hostname}
     list = for tableId, contents of fixtures
       [load, client, (conf.tableName tableId), contents]
-    chain list, (err, success) ->
-      serverFactory.start conf, (up, s) ->
+
+    startServer = ->
+      rest.start conf, (up, s) ->
         if up then throw up
         server = s
         for k, t of tests
           exports[k] = t
 
+    chain list, (err, success) ->
+      if err then throw err
+      startServer()
+
+
 load = (client, tableName, contents, cb) ->
-  "Load the passed fixtures into the given table."
-  rows = []
+  "Load the passed contents into the given table."
+  puts = []
+
+  putNested = (value, cKey) ->
+    if typeof(cell) == "string" or typeof(cell) == "number"
+      puts.push {key: key, column: cKey, '$': cell}
+    else
+      for ts, value of cell
+        puts.push {key: key, column: cKey, timestamp: ts, '$': value}
+
   for key, families of contents
     for family, columns of families
       for qualifier, cell of columns
-        cKey = [family, qualifier].join(':')
-        if typeof(cell) == "string" or typeof(cell) == "number"
-          rows.push {key: key, column: cKey, '$': cell}
-        else
-          for ts, value of cell
-            rows.push {key: key, column: cKey, timestamp: ts, '$': value}
+        putNested cell, [family, qualifier].join(':')
+
   table = client.getRow tableName, null
-  table.put rows, (err, success) ->
-    if err then cb(err, null)
-    else cb(null, success)
+  table.put puts, (err, success) ->
+    if err then return cb(err)
+    return cb(null, success)
 
 
 tests =
@@ -52,7 +62,15 @@ tests =
     check = (res) ->
       doc = (JSON.parse res.body)
       assert.eql doc.id, "doc3"
-      assert.eql doc.text, fixtures.documents["will/mid/doc3"].content.text
+      assert.eql doc.text, fixtures.documents["will/mid/doc3"].main.text
+    assert.response server, req, {status: 200}, check
+
+  'test GET one cluster': (beforeExit) ->
+    req = {method: 'GET', url: '/clusters/will/mid/macbeth'}
+    expected = ["doc3", "doc4", "doc5"]
+    check = (res) ->
+      actual = (JSON.parse res.body).sort()
+      assert.eql actual, expected
     assert.response server, req, {status: 200}, check
 
   'test GET all clusters A': ->
@@ -67,14 +85,6 @@ tests =
       assert.eql all["caesar"].length, 2
       assert.eql all["general"].length, 2
     assert.response server, req, check
-
-  'test GET one cluster': (beforeExit) ->
-    req = {method: 'GET', url: '/clusters/will/mid/macbeth'}
-    expected = ["doc3", "doc4", "doc5"]
-    check = (res) ->
-      actual = (JSON.parse res.body).sort()
-      assert.eql actual, expected
-    assert.response server, req, {status: 200}, check
 
   'test GET all clusters B': ->
     req = {method: 'GET', url: '/clusters/will/tail'}
@@ -105,6 +115,7 @@ tests =
       data: JSON.stringify {id: '11', text: 'Speak less than thou knowest'}
     assert.response server, req, {body: "/docs/will/lear/11"}
 
+other =
   'test POST doc to invalid collections': ->
     req =
       method: 'POST'

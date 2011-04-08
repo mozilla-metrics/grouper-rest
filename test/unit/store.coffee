@@ -1,30 +1,25 @@
 assert = require 'assert'
 
-query = require 'query/query'
-stackFactory = require 'store/stack'
-config = (require 'config')
+model = require 'model'
+StackFactory = (require 'storage').StackFactory
+config = require 'config'
+
 
 TEST_CONF = "test/resources/testconf.json"
 
 testStore = (beforeExit, modules...) ->
   available = false
-  added = 0
-  failed = 0
   config TEST_CONF, (err, conf) ->
     assert.ok !err
     assert.ok conf != null
-    stack = stackFactory conf
+    factory = new StackFactory conf
     for module in modules
-      stack.push module
-    stack.on 'storeAdded', (store) -> ++added
-    stack.on 'storeFailed', (store) -> ++failed
-    stack.build (err, store) ->
+      factory.push module.factory
+    factory.build (err, store) ->
       if err then console.log "Store err: ", err, ", store: ", store
       assert.ok !err
       available = true
   beforeExit ->
-    assert.eql added, modules.length + 1
-    assert.eql failed, 0
     assert.ok available
 
 module.exports =
@@ -33,31 +28,30 @@ module.exports =
 
     config TEST_CONF, (err, conf) ->
       assert.ok !err
-      stack = stackFactory conf
-      stack.build (err, store) ->
+      factory = new StackFactory conf
+      factory.build (err, store) ->
         if err then assert.ok false
         called = true
     beforeExit -> assert.ok called
 
   "init stack with defaults": (beforeExit) ->
-    testStore beforeExit, (require "store/defaults")
+    testStore beforeExit, (require 'storage').defaults
 
   "init stack with hbase": (beforeExit) ->
-    testStore beforeExit, (require "store/hbase")
+    testStore beforeExit, (require 'storage').hbase
 
-  "try modifying sealed stack": (beforeExit) ->
-    available = false
-    pushFailed = false
+  "stack immutability": (beforeExit) ->
+    first = null
     config TEST_CONF, (err, conf) ->
       assert.ok !err
       assert.ok conf != null
-      stack = stackFactory conf
-      stack.on 'storeFailed', (err) -> pushFailed = true
-      stack.build (err, store) ->
-        if err then return
-        available = true
-      stack.push (require "store/defaults")
 
-    beforeExit ->
-      assert.ok available
-      assert.ok pushFailed
+      factory = new StackFactory conf
+      factory.build (err, first_) ->
+        assert.ok first_
+        first = first_
+
+      factory.push (require 'storage').defaults.factory
+      factory.build (err, second) ->
+        assert.ok second
+        assert.ok first != second

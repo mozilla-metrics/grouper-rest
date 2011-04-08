@@ -1,25 +1,31 @@
-keys = require 'query/reverse_parts_keys'
-query = require 'query/query'
 assert = require 'assert'
 
+keys = require 'storage/keys/reverse_parts_keys'
+model = require 'model'
 
-NS = 'myNs'
-CK = 'myCk'
+
+COL_REF = new model.CollectionRef 'myNS', 'myCK'
+
+DOCREF_A = new model.DocumentRef COL_REF, '12345'
+DOCREF_B = new model.DocumentRef COL_REF, 'abc'
+
+ALLREF_A = new model.ClusterRef COL_REF, '62385619', null
+ALLREF_B = new model.ClusterRef COL_REF, '9999955555', null
+
+CLUREF_A = new model.ClusterRef COL_REF, '62385619', 'fusswuss'
+CLUREF_B = new model.ClusterRef COL_REF, '999955555', 'myLabel'
+
 
 module.exports =
 
   'it makes document keys': ->
-    assert.eql (keys.doc (query.forDocument NS, CK, '12345')), 'myNs/myCk/54321'
-    assert.eql (keys.doc (query.forDocument NS, CK, 'abc')), 'myNs/myCk/cba'
+    assert.eql (keys.document DOCREF_A), 'myNS/myCK/54321'
+    assert.eql (keys.document DOCREF_B), 'myNS/myCK/cba'
 
   'it makes cluster keys': ->
-    q = query.forCluster NS, CK, 'fusswuss', '62385619'
-    assert.eql (keys.cluster q), 'DEFAULT/myNs/myCk/91658326/fusswuss'
-    q = query.forCluster NS, CK, 'myLabel', '9999955555'
-    assert.eql (keys.cluster q), 'DEFAULT/myNs/myCk/5555599999/myLabel'
+    assert.eql (keys.cluster CLUREF_A), 'DEFAULT/myNS/myCK/91658326/fusswuss'
+    assert.eql (keys.cluster CLUREF_B), 'DEFAULT/myNS/myCK/555559999/myLabel'
 
-  'it makes all-clusters glob keys': ->
-    q = query.forAllClusters NS, CK, '62385619'
-    assert.eql (keys.allClusters q), 'DEFAULT/myNs/myCk/91658326/*'
-    q = query.forAllClusters NS, CK, '9999955555'
-    assert.eql (keys.allClusters q), 'DEFAULT/myNs/myCk/5555599999/*'
+  'it makes all-clusters scanner keys': ->
+    assert.eql (keys.allClusters CLUREF_A), 'DEFAULT/myNS/myCK/91658326/'
+    assert.eql (keys.allClusters CLUREF_B), 'DEFAULT/myNS/myCK/555559999/'

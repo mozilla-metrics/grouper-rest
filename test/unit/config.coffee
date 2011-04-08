@@ -1,6 +1,6 @@
 assert = require 'assert'
 
-config = (require 'config')
+config = require 'config'
 
 
 module.exports =
