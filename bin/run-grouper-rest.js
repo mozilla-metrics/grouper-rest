@@ -1,6 +1,6 @@
 var serverFactory = require('grouper-rest');
 var configFactory = require('config');
-
+var storage = require('storage');
 
 function usage(status) {
   console.log("usage: node", process.argv[1], "COMMAND", "[CONFIG_FILE_PATH]")
@@ -50,7 +50,7 @@ function reset(configPath) {
         console.log("aborted");
         process.exit(1);
       }
-      var admin = require('store').hbase.HBaseAdmin(conf);
+      var admin = new storage.hbase.HBaseAdmin(conf);
       admin.reset(function (err, success) {
         console.log("Tables '%s*' reset", conf.prefix);
       });
