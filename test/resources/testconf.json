@@ -1,8 +1,8 @@
-{ "hbaseRest": "http://localhost:8080"
-, "hbaseZk": "localhost:2181"
-, "redis": ""
-, "rabbitmq": ""
-, "prefix": "testfish_"
-, "restPort": "8031"
-, "keyScheme": "simple"
+{ "general:prefix": "testfish_",
+  "rest:port": "8031",  
+  "storage:hbase:rest": "http://localhost:8080",
+  "storage:hbase:zookeeper:quorum": "localhost:2181",
+  "storage:hbase:keys:scheme": "SIMPLE",
+  "storage:redis": "",
+  "storage:rabbitmq": ""
 }

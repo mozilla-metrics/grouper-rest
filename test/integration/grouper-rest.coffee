@@ -11,16 +11,25 @@ fixtures = require '../resources/fixtures'
 
 
 server = null
+tableName = (conf, suffix) ->
+  prefix = conf.get "general:prefix"
+  if not prefix then assert.fail()
+  return prefix + suffix;
+
+hbaseClient = (conf) ->
+  restUrl = conf.get "storage:hbase:rest"
+  if not restUrl then assert.fail()
+  parts = url.parse restUrl;
+  return require('hbase') {'host': parts.hostname, 'port': parts.port}
 
 
 setup = (require 'config') 'test/resources/testconf.json', (err, conf) ->
   factory = new StackFactory conf
   factory.push (require 'storage').hbase.factory
   factory.build (store) ->
-    parts = url.parse conf.hbaseRest
-    client = require('hbase') {port: parts.port, host:parts.hostname}
+    client = hbaseClient conf
     list = for tableId, contents of fixtures
-      [load, client, (conf.tableName tableId), contents]
+      [load, client, (tableName conf, tableId), contents]
 
     startServer = ->
       rest.start conf, (up, s) ->

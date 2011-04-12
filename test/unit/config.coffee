@@ -18,27 +18,19 @@ module.exports =
     called = false
     config null, (err, conf) ->
       called = true
-      assert.eql conf.prefix, "grouperfish_"
-      assert.eql conf.hbaseRest, "http://localhost:8080"
+      assert.eql (conf.get "general:prefix"), "grouperfish_"
+      assert.eql (conf.get "storage:hbase:rest"), "http://localhost:8080"
     beforeExit -> assert.ok called
 
   "it allows to configure stuff": (beforeExit) ->
     called = false
     config './test/resources/testconf.json', (err, conf) ->
       called = true
-      assert.eql conf.hbaseRest, "http://localhost:8080"
-      assert.eql conf.hbaseZk, "localhost:2181"
-      assert.eql conf.prefix, "testfish_"
-      assert.eql conf.restPort, "8031"
-    beforeExit -> assert.ok called
-
-  "it has factory extensions": (beforeExit) ->
-    called = false
-    config './test/resources/testconf.json', (err, conf) ->
-      assert.ok !err
-      called = true
-      assert.ok conf.tableName
-      assert.ok conf.hbaseClient
+      assert.eql (conf.get "storage:hbase:rest"), "http://localhost:8080"
+      assert.eql (conf.get "storage:hbase:zookeeper:quorum"),
+                 "localhost:2181"
+      assert.eql (conf.get "general:prefix"), "testfish_"
+      assert.eql (conf.get "rest:port"), "8031"
     beforeExit -> assert.ok called
 
   "it has defaults for fallback": (beforeExit) ->
@@ -46,5 +38,5 @@ module.exports =
     config './test/resources/testconf.jzon', (err, conf) ->
       called = true
       assert.ok !err
-      assert.eql conf.restPort, "8030"
+      assert.eql (conf.get "rest:port"), "8030"
     beforeExit -> assert.ok called
