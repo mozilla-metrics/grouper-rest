@@ -66,28 +66,32 @@ module.exports =
         namespace: "keats"
         collection: "all",
         size: '1'
-        "configurations:DEFAULT": '{"lastRebuild": 1299353145}'
+        modified: '1299353145'
+        "configuration:DEFAULT:rebuilt": '1299353145'
       processing: {dictionary: "<opaque>"}
     "will/ere":
       main:
         namespace: "will",
         collection: "ere",
         size: '1'
-        "configurations:DEFAULT": '{"lastRebuild": 1299173619}'
+        modified: '1299173619'
+        "configuration:DEFAULT:rebuilt": '1299173619'
       processing: {dictionary: "<opaque>"}
     "will/mid":
       main:
         namespace: "will"
         collection: "mid"
         size: '7'
-        "configurations:DEFAULT": '{"lastRebuild": 1299352272}'
+        modified: '1299352272'
+        "configuration:DEFAULT:rebuilt": '1299352272'
       processing: {dictionary: "<opaque>"}
     "will/tail":
       main:
         namespace: "will"
         collection: "tail"
         size: '2'
-        "configurations:DEFAULT": '{"lastRebuild": 1242375913}'
+        modified: '1242375913'
+        "configuration:DEFAULT:rebuilt": '1242375913'
       processing: {dictionary: "<opaque>"}
 
   clusters:

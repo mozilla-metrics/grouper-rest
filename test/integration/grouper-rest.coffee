@@ -1,68 +1,16 @@
 assert = require 'assert'
-url = require 'url'
-
-chain = (require 'slide').chain
-asyncMap = (require 'slide').asyncMap
-
 rest = require 'grouper-rest'
-storage = require 'storage'
-StackFactory = storage.StackFactory
+test_helpers = require '../lib/test_helpers'
 fixtures = require '../resources/fixtures'
 
 
 server = null
-tableName = (conf, suffix) ->
-  prefix = conf.get "general:prefix"
-  if not prefix then assert.fail()
-  return prefix + suffix;
-
-hbaseClient = (conf) ->
-  restUrl = conf.get "storage:hbase:rest"
-  if not restUrl then assert.fail()
-  parts = url.parse restUrl;
-  return require('hbase') {'host': parts.hostname, 'port': parts.port}
-
-
-setup = (require 'config') 'test/resources/testconf.json', (err, conf) ->
-  factory = new StackFactory conf
-  factory.push (require 'storage').hbase.factory
-  factory.build (store) ->
-    client = hbaseClient conf
-    list = for tableId, contents of fixtures
-      [load, client, (tableName conf, tableId), contents]
-
-    startServer = ->
-      rest.start conf, (up, s) ->
-        if up then throw up
-        server = s
-        for k, t of tests
-          exports[k] = t
-
-    chain list, (err, success) ->
-      if err then throw err
-      startServer()
-
-
-load = (client, tableName, contents, cb) ->
-  "Load the passed contents into the given table."
-  puts = []
-
-  putNested = (value, cKey) ->
-    if typeof(cell) == "string" or typeof(cell) == "number"
-      puts.push {key: key, column: cKey, '$': cell}
-    else
-      for ts, value of cell
-        puts.push {key: key, column: cKey, timestamp: ts, '$': value}
-
-  for key, families of contents
-    for family, columns of families
-      for qualifier, cell of columns
-        putNested cell, [family, qualifier].join(':')
-
-  table = client.getRow tableName, null
-  table.put puts, (err, success) ->
-    if err then return cb(err)
-    return cb(null, success)
+test_helpers.setup (err, conf) ->
+  if err then throw err
+  rest.start conf, (up, s) ->
+    if up then throw up
+    server = s
+    test_helpers.update exports, tests
 
 
 tests =
@@ -124,7 +72,6 @@ tests =
       data: JSON.stringify {id: '11', text: 'Speak less than thou knowest'}
     assert.response server, req, {body: "/docs/will/lear/11"}
 
-other =
   'test POST doc to invalid collections': ->
     req =
       method: 'POST'
