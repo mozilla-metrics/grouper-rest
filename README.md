@@ -75,9 +75,11 @@ So far this is incomplete (something like 70%), but we aim for 100% coverage (in
 
 ### How can I use it?
 While this is not going to be very useful yet, you can start the REST service using:
+
     > node bin/run-grouper-rest
 
 There is a mock service. Use it to develop and test clients without running hbase.
+
     > node bin/run-mock
 
 
