@@ -2,4 +2,5 @@
 .settings
 test_js
 lib-cov
+node_modules
 
