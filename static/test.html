@@ -27,13 +27,18 @@
             margin-bottom: 0.2cm;
         }
 
+        a {
+            color: #d3a33d;
+            text-decoration: none;
+        }
+
         pre {
             overflow: auto;
         }
 
         button {
             margin-bottom: 0.2cm;
-            font-size: 110%;
+            font-size: 90%;
             background: #333;
             border: solid 1px #888;
             padding: 0.1cm;
@@ -63,7 +68,7 @@
 
         textarea, pre {
             width: 850px;
-            height: 200px;
+            height: 300px;
             display: block;
         }
 
@@ -98,11 +103,11 @@
 
   <fieldset><legend>Context</legend>
     <label for="gf">Grouperfish REST</label>
-    <input id="gf" value="http://localhost:8030"><br>
+    <input id="gf" value=""><br>
     <label for="ns">namespace</label>
-    <input id="ns" value="myns"><br>
+    <input id="ns" value="test"><br>
     <label for="ck">collection key</label>
-    <input id="ck" value="praise-firefox-5.0">
+    <input id="ck" value="praise-firefox-6.0a1">
   </fieldset>
 
   <fieldset><legend>Test GET</legend>
@@ -111,12 +116,15 @@
     <label for="clusters">
     <pre id="clusters"></pre>
     <button id="getClusters">get clusters</button>
-    <button id="resolveClusters">get + resolve (slow)</button>
+    <label for="getClusters" style="font-size: 70%;">
+        Click the cluster labels to fetch the plain documents.
+        Can take a while.
+    </label>
   </fieldset>
 
   <fieldset><legend>Test POST</legend>
-  <textarea id="posts">
-{"docs":[
+  <textarea id="posts" spellcheck='false'>
+{"bulk":[
     {"id": "testdoc1", "text": "I like that overall I notice what I want to see on the web without the seams. That is, you are seamless but still you seem the same!"},
     {"id": "testdoc2", "text": "habe nicht mehr so viel abstürze. nur ab und zu zeigt er an firefox abstürz an aber nicht so oft."},
     {"id": "testdoc3", "text": "i think it's now faster than google chrome... but it is only in safe mode... hope you guy improve it... thanks Firefox!!!"},
@@ -131,9 +139,10 @@
 ]}
   </textarea>
   <button id="postDocs">post documents</button>
+  <button id="postBulk">post bulk</button>
   <p>
 
-  <textarea id="docIds">
+  <textarea id="docIds" spellcheck='false'>
 {"ids":[
     "testdoc1",
     "testdoc2",
@@ -149,25 +158,133 @@
   <script type="text/javascript">
     var $ = jQuery;
 
-    var fields = ["gf", "ns", "ck", "label", "clusters", "posts", "docIds"];
     function form() {
         var form = {};
-        $.each(fields,
+        $.each(["gf", "ns", "ck", "label", "clusters", "posts", "docIds"],
                function (i, item) { form[item] = $("#"+item).val(); });
         return form;
     }
 
-    function p (value) {
+    function p(value) {
         return encodeURIComponent(value);
     }
 
-    function log (msg) {
+    function get() {
+        var f = form();
+        var url = f.gf + "/clusters/" + p(f.ns) + "/" + p(f.ck);
+        if (f.label) {
+            url += "/" + f.label;
+        }
+
+        function write (label, items) {
+            var link = '<a href="javascript:resolve(\'' + label
+                       + '\')">' + label + ':</a> ';
+            out.append(link);
+            out.append(items.join(', '));
+            out.append('<br>');
+        }
+
+        var myId = ++reqId;
+        var out = $("#clusters").text("");
+
+        $.ajax(url, {
+            dataType: "json",
+            error: makeErrorHandler(myId),
+            success: function (result) {
+                if (f.label) {
+                    write(f.label, result);
+                }
+                else {
+                    $.each(result, write);
+                }
+            }
+        });
+    }
+
+    function resolve(label) {
+        var f = form();
+        var url =
+            f.gf + "/clusters/" + p(f.ns) + "/" + p(f.ck) + "/" + p(label);
+        var myId = ++reqId;
+
+        $.ajax(url, {
+            dataType: "json",
+            error: makeErrorHandler(myId),
+            success: function (results) {
+                $.each(results, function (i, id) {
+                    var myId = ++reqId;
+                    $.ajax(docUrl(f, id), {
+                        error: makeErrorHandler(myId),
+                        complete: makeLogHandler(myId)
+                    });
+                });
+            }
+        });
+    }
+
+    $("#getClusters").click(get);
+
+    var reqId = 0;
+    $("#postDocs").click(function () {
+        var f = form();
+        var url = f.gf + "/collections/" + p(f.ns) + "/" + p(f.ck);
+        $.each(JSON.parse(f.posts).bulk, function (i,  doc) {
+            console.log("......", url, JSON.stringify(doc));
+            doPost(url, JSON.stringify(doc));
+        });
+    });
+
+    $("#postBulk").click(function () {
+        var f = form();
+        var url = f.gf + "/collections/" + p(f.ns) + "/" + p(f.ck);
+        doPost(url, f.posts);
+    });
+
+    function docUrl(f, id) {
+        return f.gf + "/docs/" + p(f.ns) + "/" + p(f.ck) + "/" + p(id);
+    }
+
+    function doPost(url, body) {
+        function onPostComplete_($xhr) {
+            var msg = "&gt;&gt;Req#" + reqId + " ";
+            msg += $xhr.status + " " + $xhr.statusText;
+            msg += ", data:" + $xhr.responseText;
+            log(msg);
+        }
+        var myId = ++reqId;
+        log("&lt;&lt;Req#" + myId + " POST " + body);
+        var settings = {
+            type: "POST",
+            mimeType: "application/json",
+            data: body,
+            dataType: "text",
+            error: makeErrorHandler(myId),
+            complete: onPostComplete_
+        };
+        $.ajax(url, settings);
+    }
+
+    $("#getDocs").click(function () {
+        var f = form();
+        $.each(JSON.parse(form().docIds).ids, function (i,  id) {
+            var myId = ++reqId;
+            $.ajax(docUrl(f, id), {
+                error: makeErrorHandler(myId),
+                complete: makeLogHandler(myId)
+            });
+        });
+    });
+
+    var URL = document.location.protocol + "//" + document.location.host;
+    $("#gf").val(URL);
+
+    function log(msg) {
         $("#log")
             .append(msg).append("\n")
             .prop({scrollTop: $("#log").prop("scrollHeight")}, 100);
     }
 
-    function makeErrorHandler (requestId) {
+    function makeErrorHandler(requestId) {
         return function ($xhr, textStatus, errorThrown) {
             var message = "Req#" + requestId + " FAIL: " + textStatus;
             if (errorThrown) {
@@ -177,120 +294,14 @@
         };
     }
 
-    function fetch (f, handler) {
-        var url = f.gf + "/clusters/" + p(f.ns) + "/" + p(f.ck);
-        if (f.label) {
-            url += "/" + f.label;
+    function makeLogHandler(reqId) {
+        return function logDoc ($xhr) {
+            var msg = "&gt;&gt;Req#" + reqId + " ";
+            msg += " " + $xhr.status + " " + $xhr.statusText;
+            msg += ", data:" + $xhr.responseText;
+            log(msg);
         }
-        var myId = ++reqId;
-        $.ajax(url, {
-            dataType: "json",
-            error: makeErrorHandler(myId),
-            success: handler
-        });
     }
-
-    function get () {
-        var f = form();
-        fetch(f, function (result) {
-            console.log("handler");
-            var out = $("#clusters");
-            out.text("");
-            if (f.label) {
-                out.append(f.label + ": ");
-                out.append(result.join(", "));
-                out.append("\n");
-            }
-            else {
-                for (var label in result) {
-                    out.append(label + ": ");
-                    out.append(result[label].join(", "));
-                    out.append("\n");
-                }
-            }
-            console.log($xhr);
-        });
-    }
-
-    function resolve () {
-        var f = form();
-        function texts(ids) {
-            var texts = [];
-            $.each(ids, function (i, id) {
-                var v = $.ajax(docUrl(f, id), {async:false}).responseText;
-                texts.push(JSON.parse(v).text);
-            });
-            return "   " + texts.join("\n   ");
-        }
-
-        fetch(f, function (result) {
-            var out = $("#clusters");
-            out.text("");
-            if (f.label) {
-                out.append(f.label + ": \n");
-                out.append(texts(result));
-                out.append("\n");
-            }
-            else {
-                for (var label in result) {
-                    console.log("label ", label)
-                    out.append(label + ": \n");
-                    out.append(texts(result[label]));
-                    out.append("\n");
-                }
-            }
-            console.log($xhr);
-        });
-    }
-
-    $("#getClusters").click(get);
-    $("#resolveClusters").click(resolve);
-
-
-    var reqId = 0;
-    $("#postDocs").click(function () {
-        var f = form();
-        var url = f.gf + "/collections/" + p(f.ns) + "/" + p(f.ck);
-        $.each(JSON.parse(form().posts).docs, function (i,  post) {
-            var myId = ++reqId;
-            var json = JSON.stringify(post);
-            log("&lt;&lt;Req#" + myId + " POST " + json);
-            var settings = {
-                type: "POST",
-                mimeType: "application/json",
-                data: JSON.stringify(post),
-                dataType: "text",
-                error: makeErrorHandler(myId),
-                complete: function ($xhr) {
-                    var msg = "&gt;&gt;Req#" + myId + " ";
-                    msg += $xhr.status + " " + $xhr.statusText;
-                    msg += ", data:" + $xhr.responseText;
-                    log(msg);
-                }
-            };
-            $.ajax(url, settings);
-        });
-    });
-
-    function docUrl (f, id) {
-        return f.gf + "/docs/" + p(f.ns) + "/" + p(f.ck) + "/" + p(id)
-    }
-
-    $("#getDocs").click(function () {
-        var f = form();
-        $.each(JSON.parse(form().docIds).ids, function (i,  id) {
-            var myId = ++reqId;
-            $.ajax(docUrl(f, id), {
-                error: makeErrorHandler(myId),
-                complete: function ($xhr) {
-                    var msg = "&gt;&gt;Req#" + myId + " ";
-                    msg += " " + $xhr.status + " " + $xhr.statusText;
-                    msg += ", data:" + $xhr.responseText;
-                    log(msg);
-                }
-            });
-        });
-    })
 
   </script>
  </body>

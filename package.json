@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "amqp": ">= 0.0.2",
+    "async": ">= 0.1.6",
     "connect": ">= 1.4.3 < 2.0.0",
     "express": ">= 2.2.1",
     "hbase": ">= 0.0.9",
